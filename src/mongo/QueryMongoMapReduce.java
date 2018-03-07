@@ -253,8 +253,26 @@ public class QueryMongoMapReduce
     {
     	// TODO: Write a MongoDB Map-Reduce query that find the order with the maximum # of items. SELECT MAX(orders.item) 
     	// Note: Output key should be "max".
+    	MongoCollection<Document> col = db.getCollection(COLLECTION_NAME);
+		String mapfn = "function() { "
+				+ "for (var i = 0; i<this.orders.length;i++){"
+				+ "var key = this.orders[i].num;"
+				+ "var value = this.orders[i];"
+				+ "emit(\"max\", value);}"
+				+ "}";
+		String reducefn ="function(key, prod){"
+				+ "var max=0;"
+				+ "var tuple;"
+				+ "for (var k =0; k<prod.length;k++){"
+				+ "if(max<prod[k].items){"
+				+ "max = prod[k].items;"
+				+ "tuple = prod[k];}"
+				+ "} "
+				+ "return tuple;}";				
+		MapReduceIterable<Document> output = col.mapReduce(mapfn, reducefn);
+		return output.iterator();
     	
-    	return null;
+		//return null;
     }
     
     /**
@@ -264,6 +282,8 @@ public class QueryMongoMapReduce
     {
     	// TODO: Write a MongoDB Map-Reduce query that determines the number of times first name is: longer than last name, same as last name, and shorter than last name.
     	// Note: Output keys should be "firstlonger", "firstshorter", and "same".
+    	
+		
     	
     	return null;
     }
