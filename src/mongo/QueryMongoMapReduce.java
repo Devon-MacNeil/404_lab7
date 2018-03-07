@@ -206,10 +206,10 @@ public class QueryMongoMapReduce
     	// See: http://api.mongodb.org/java/current/com/mongodb/DBCollection.html#mapReduce-java.lang.String-java.lang.String-java.lang.String-com.mongodb.DBObject-
     	    	
 		MongoCollection<Document> col = db.getCollection(COLLECTION_NAME);
-						
-		// MapReduceIterable<Document> output = col.mapReduce(mapfn, reducefn);
-		// return output.iterator();
-		return null;
+		String mapfn = "function() { emit(this.state, 1);}";
+		String reducefn ="function(key, items){ return Array.sum(items);}";				
+		MapReduceIterable<Document> output = col.mapReduce(mapfn, reducefn);
+		return output.iterator();
     }
        
    
